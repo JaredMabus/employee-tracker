@@ -17,7 +17,7 @@ class DB {
             password: process.env.PASSWORD,
             database: this.database
         });
-        if (this.conn.errerEmitted) {
+        if (this.conn.errorEmitted) {
             console.log("Could not connect to Database")
         } else {
             console.log("DB connected to successfully!\n")
