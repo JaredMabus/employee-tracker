@@ -9,6 +9,7 @@ class DB {
         this.database = database;
     }
 
+    // Connect to db
     async connect() {
         this.conn = await mysql.createConnection({
             host: process.env.HOST,
@@ -17,12 +18,13 @@ class DB {
             database: this.database
         });
         if (this.conn.errerEmitted) {
-            console.log(this.conn)
+            console.log("Could not connect to Database")
         } else {
             console.log("DB connected to successfully!\n")
         }
     }
 
+    // Query method
     async query(queryString) {
         if (this.conn === null) {
             console.log("Not Connected to DB");
@@ -34,8 +36,9 @@ class DB {
 
     }
 
+    // Create seed method
     async seed() {
-        if (this.db === null) {
+        if (this.conn === null) {
             console.log("Not Connected to DB");
         };
 
@@ -44,7 +47,8 @@ class DB {
         this.db.query();
     }
 
-    async close() {
+    // Close the db connection
+    close() {
         this.conn.close();
         console.log("Closed DB connection")
     }
