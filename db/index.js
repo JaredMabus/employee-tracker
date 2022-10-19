@@ -48,11 +48,17 @@ class DB {
             console.log("Not Connected to DB");
         };
 
-        await this.conn.query(`INSERT INTO ??(??) VALUES ? `,
-            [tblName, Object.keys(data[0]), data.map(item => {
-                return Object.values(item);
-            })]
-        );
+        // data.keys are used as the field names and 
+        let fields = Object.keys(data[0]);
+
+        // array of nested arrays for all the values
+        let values = data.map(item => {
+            return Object.values(item);
+        })
+
+        // Execute query 
+        await this.conn.query(`INSERT INTO ??(??) VALUES ? `, [tblName, fields, values]);
+
         console.log(`Data successfully added to '${tblName}' table!\n`);
     };
 
