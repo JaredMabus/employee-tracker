@@ -2,7 +2,7 @@ const DB = require('./db');
 const { Department, Role, Employee } = require('./lib/Table');
 const inquirer = require('inquirer');
 
-// Test DB Class connection
+// Initialize app
 const init = async () => {
     const db = new DB('business_db')
 
@@ -15,8 +15,13 @@ const init = async () => {
     // await db.allEmployees();
 
     // Test INSERT queries
-    await db.insert("department", [{ name: "Test" }, { name: "New test" }])
+    const dpt = new Department(db);
+    const role = new Role(db);
+    const employee = new Employee(db);
 
+    // await dpt.add();
+    // await role.add();
+    await employee.add();
 
     db.close();
     return;
@@ -24,7 +29,7 @@ const init = async () => {
 
 
 // Here we load the initial prompts with a series of options. The first option is provided for you.
-// function loadMainPrompts() {
+// const loadMainPrompts = () => {
 //     prompt([
 //         {
 //             type: "list",
