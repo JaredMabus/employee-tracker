@@ -54,7 +54,7 @@ class DB {
         };
 
         // Store objects in array to allow for adding multiple objects
-        var data = new Array(data);
+        Array.isArray(data) ? "" : data = new Array(data);
 
         // data.keys are used as the field names
         let fields = Object.keys(data[0]);
