@@ -2,6 +2,11 @@ const mysql = require('mysql2/promise');
 require('console.table');
 require('dotenv').config();
 
+/**
+ * Database controller class
+ * @param {func} conn: mysql.createConnection object
+ * @param {string} database: database to connect to
+ */
 class DB {
     constructor(database = null) {
         this.conn = null;
@@ -24,9 +29,9 @@ class DB {
     };
 
     /**
-     * Select all recors from a table
-     * @params {String} columns: name of the table
-     * @params {Array} tblName: all the fields to inclue in the SELECT
+     * Select all records from a table
+     * @param {Array} columns: array of column names to incluse in the results
+     * @param {String} tblName: all the fields to inclue in the SELECT
      * @returns records: all the records in the table
      */
     async tblAll(columns, tblName,) {
@@ -34,30 +39,33 @@ class DB {
             console.log("Not Connected to DB");
         };
         let [records, fields] = await this.conn.query(`SELECT ?? FROM ??;`, [columns, tblName]);
-        console.table(records);
+        // console.table(records);
         return records;
     };
 
     /**
      * Insert values into table
-     * @params {Array} tblName: name of the table
-     * @params {Array of objects} data: array of objects to be inserted into a table
+     * @param {String} tblName: name of the table
+     * @param {Array of objects} data: array of objects to be inserted into a table
      */
     async insert(tblName, data) {
         if (this.conn === null) {
             console.log("Not Connected to DB");
         };
 
-        // data.keys are used as the field names and 
+        // Store objects in array to allow for adding multiple objects
+        var data = new Array(data);
+
+        // data.keys are used as the field names
         let fields = Object.keys(data[0]);
 
-        // array of nested arrays for all the values
-        let values = data.map(item => {
+        // Array of nested arrays for insert query
+        data = data.map(item => {
             return Object.values(item);
         })
 
         // Execute query 
-        await this.conn.query(`INSERT INTO ??(??) VALUES ? `, [tblName, fields, values]);
+        await this.conn.query(`INSERT INTO ??(??) VALUES ? `, [tblName, fields, data]);
 
         console.log(`Data successfully added to '${tblName}' table!\n`);
     };
