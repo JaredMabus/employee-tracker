@@ -31,7 +31,7 @@ class DB {
     /**
      * Select all records from a table
      * @param {Array} columns: array of column names to incluse in the results
-     * @param {String} tblName: all the fields to inclue in the SELECT
+     * @param {String} tblName: name of table
      * @returns records: all the records in the table
      */
     async tblAll(columns, tblName,) {
@@ -45,7 +45,7 @@ class DB {
 
     /**
      * Insert values into table
-     * @param {String} tblName: name of the table
+     * @param {String} tblName: name of table
      * @param {Array of objects} data: array of objects to be inserted into a table
      */
     async insert(tblName, data) {
