@@ -1,90 +1,100 @@
 const DB = require('./db');
 const { Department, Role, Employee } = require('./lib/Table');
 const inquirer = require('inquirer');
+const logo = require('asciiart-logo');
+const config = require('./package.json');
 
 // Initialize app
 const init = async () => {
-    const db = new DB('business_db')
-
-    // Connect to database
+  try {
+    console.log(logo(config).render());
+    const db = new DB();
     await db.connect();
-
-    // Test SELECT queries
-    // await db.tblAll(["id", "name"], "department")
-    // await db.allRoles();
-    // await db.allEmployees();
-
-    // Test INSERT queries
-    const dpt = new Department(db);
-    const role = new Role(db);
-    const employee = new Employee(db);
-
-    // await dpt.add();
-    // await role.add();
-    await employee.add();
-
-    db.close();
+    await loadMainPrompts(db);
     return;
+
+  } catch (err) {
+    console.log(err)
+  }
 }
 
-
 // Here we load the initial prompts with a series of options. The first option is provided for you.
-// const loadMainPrompts = () => {
-//     prompt([
-//         {
-//             type: "list",
-//             name: "choice",
-//             message: "What would you like to do?",
-//             choices: [
-//                 {
-//                     name: "View All Employees",
-//                     value: "VIEW_EMPLOYEES"
-//                 },
+const loadMainPrompts = async (db) => {
+  const dpt = new Department(db);
+  const role = new Role(db);
+  const employee = new Employee(db);
 
-//                 // add more options here
-//             ]
-//         }
-//     ]).then(res => {
-//         let choice = res.choice;
-//         // Call the appropriate function depending on what the user chose
+  const res = await inquirer.prompt([
+    {
+      type: "list",
+      name: "choice",
+      message: "What would you like to do?",
+      choices: [
+        {
+          name: "View All Departments",
+          value: "VIEW_DEPARTMENTS"
+        },
+        {
+          name: "View All Roles",
+          value: "VIEW_ROLES"
+        },
+        {
+          name: "View All Employees",
+          value: "VIEW_EMPLOYEES"
+        },
+        {
+          name: "Add New Department",
+          value: "ADD_DEPARTMENT"
+        },
+        {
+          name: "Add New Role",
+          value: "ADD_ROLE"
+        },
+        {
+          name: "Add New Employee",
+          value: "ADD_EMPLOYEE"
+        },
+        {
+          name: "Update Employee",
+          value: "UPDATE_EMPLOYEE"
+        },
+        {
+          name: "Quit",
+          value: "QUIT"
+        },
+      ]
+    }
+  ])
 
-//         switch (choice) {
-//             case "VIEW_EMPLOYEES":
-//                 viewEmployees();
-//                 break;
+  switch (res.choice) {
+    case "VIEW_DEPARTMENTS":
+      await dpt.all();
+      break;
+    case "VIEW_ROLES":
+      await role.all();
+      break;
+    case "VIEW_EMPLOYEES":
+      await employee.all();
+      break;
+    case "ADD_DEPARTMENT":
+      await dpt.add();
+      break;
+    case "ADD_ROLE":
+      await role.add()
+      break;
+    case "ADD_EMPLOYEE":
+      await employee.add();
+      break;
+    case "UPDATE_EMPLOYEE":
+      await employee.update();
+      break;
+    case "QUIT":
+      process.exit();
+    default:
+      console.log("No Valid Choice Made");
+  }
 
-//             // add the other case statements here
-//         }
-//     }
-//     )
-// }
+  loadMainPrompts(db);
+}
 
-/* ======= Controllers ============================================================ */
-
-// Here is a function which handles the first prompt option:  View all employees
-// function viewEmployees() {
-
-//     // Here we call the method in the db file for finding all employees.
-//     // we get the result back, and then display the result 
-//     db.findAllEmployees()
-//         .then(([rows]) => {
-//             let employees = rows;
-//             console.log("\n");
-//             console.table(employees);
-//         })
-//         .then(() => loadMainPrompts());
-// }
-
-
-/* ======= END Controllers ============================================================ */
-
-/* 
-  You will write lots of other functions here for the other prompt options.
-  Note that some prompts will require you to provide more prompts, and these 
-  may need functions of their own.
-*/
-
-
-
-// Everything starts here!
 init();

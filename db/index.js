@@ -1,30 +1,25 @@
 const mysql = require('mysql2/promise');
-require('console.table');
 require('dotenv').config();
 
 /**
  * Database controller class
  * @param {func} conn: mysql.createConnection object
- * @param {string} database: database to connect to
  */
 class DB {
-    constructor(database = null) {
+    constructor() {
         this.conn = null;
-        this.database = database;
     };
 
     // Connect to db
     async connect() {
         this.conn = await mysql.createConnection({
-            host: process.env.HOST,
-            user: process.env.MYSQL_USER,
-            password: process.env.PASSWORD,
-            database: this.database
+            host: process.env.DB_HOST,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DATABASE
         });
         if (this.conn.errorEmitted) {
             console.log("Could not connect to Database")
-        } else {
-            console.log("DB connected to successfully!\n")
         }
     };
 
@@ -38,6 +33,7 @@ class DB {
         if (this.conn === null) {
             console.log("Not Connected to DB");
         };
+
         let [records, fields] = await this.conn.query(`SELECT ?? FROM ??;`, [columns, tblName]);
         // console.table(records);
         return records;
@@ -66,8 +62,11 @@ class DB {
 
         // Execute query 
         await this.conn.query(`INSERT INTO ??(??) VALUES ? `, [tblName, fields, data]);
+        console.log(`\nSuccessfully added to '${tblName}' table!\n`);
+    };
 
-        console.log(`Data successfully added to '${tblName}' table!\n`);
+    async update(tblName, id, data) {
+        await this.conn.query(`UPDATE ${mysql.escapeId(tblName)} SET ? WHERE id = ${mysql.escape(id)}`, data);
     };
 
     // View roles
@@ -76,14 +75,12 @@ class DB {
             console.log("Not Connected to DB");
         };
 
-        let sql = `SELECT r.id, r.title AS role_itle, r.salary, dt.name AS department_name
+        let sql = `SELECT r.id, r.title AS role_itle, r.salary, dt.name AS department
         FROM role r
         INNER JOIN department dt ON r.department_id = dt.id
-        ;`
+        ;`;
 
         let [records, fields] = await this.conn.query(sql);
-
-        console.table(records)
         return records;
     }
 
@@ -93,18 +90,16 @@ class DB {
             console.log("Not Connected to DB");
         };
 
-        let sql = `SELECT e.id, e.first_name, e.last_name, r.title AS role_itle, r.salary, dt.name AS department_name, CONCAT(em.first_name," ", em.last_name) AS manager
+        let sql = `SELECT e.id, e.first_name, e.last_name, r.title AS role_itle, r.salary, dt.name AS department, CONCAT(em.first_name," ", em.last_name) AS manager
         FROM employee e
-        INNER JOIN role r ON e.role_id = r.id
-        INNER JOIN department dt ON r.department_id = dt.id
-        LEFT JOIN employee em ON e.id = em.manager_id
+        JOIN role r ON e.role_id = r.id
+        JOIN department dt ON r.department_id = dt.id
+        LEFT JOIN employee em ON em.id = e.manager_id
         ;`
 
         let [records, fields] = await this.conn.query(sql);
-
-        console.table(records);
         return records;
-    }
+    };
 
     // Close the db connection
     close() {

@@ -1,32 +1,27 @@
-# employee-tracker
+# Employee Tracker
 
-# User Story:
+## Description
 
-A business owner wants to manage their company's departments, roles, and employees.
+The Employee Tracker is a Node commandline Content Management System (CMS) designed to perform CRUD operations on a MySQL database. Currently it allows for management of a businesses' department, role, and employee info.
 
-## Acceptance Criteria:
+The apps menu provides the following options:
 
-- [ ] Prompt the user with the following options:
+- View All Departments
+- View All Roles
+- View All Employees
+- Add New Department
+- Add New Role
+- Add New Employee
+- Update Employee
 
-* SELECT: view all departments, view all roles, view all employees
-* INSERT: add a department, add a role, and add an employee
-* Update: update an employee role
+## Demo Video
 
-#### View
+- [Video Demo]()
 
-- [ ] Choose view all departments > presented with a formatted table showing department names and department ids
-- [ ] Choose view all roles > job title, role id, the department that role belongs to, and the salary for that role
-- [ ] View all employees > employee ids, first names, last names, job titles, departments, salaries, and managers' first and last name
+## Usage
 
-#### Add or Update
+Start
 
-- [ ] Add a department > enter "name" of new department > added to db
-- [ ] Choose to add a role > enter name, salary, and department for the new role > added to db
-- [ ] add an employee > first name, last name, role, and manager > added to db
-- [ ] Update employee role > select an employee to update info for > updated in the db
-
-## Task
-
-- [ ] User prompts
-- [ ] Controller functions
-- [ ] ascii title
+```sh
+node index.js
+```
